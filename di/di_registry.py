@@ -24,8 +24,12 @@ class DIRegistry:
         :param class_obj:
         :return:
         """
-        registry_item = DIRegistryItem()
-        self._pool[class_obj] = registry_item
+        try:
+            registry_item = self._pool[class_obj]
+        except KeyError:
+            registry_item = DIRegistryItem()
+            self._pool[class_obj] = registry_item
+
         return registry_item
 
     def get(self, class_obj: type):
