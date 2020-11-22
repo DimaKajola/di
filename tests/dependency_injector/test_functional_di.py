@@ -15,6 +15,14 @@ class Child(Parent):
     pass
 
 
+class ChildBar(Bar):
+    pass
+
+
+class ChildBaz(Baz):
+    pass
+
+
 class TestDI(TestCase):
 
     def test_di(self):
@@ -47,3 +55,16 @@ class TestDI(TestCase):
             di('Child', module_ref=__name__)
         except Exception as e:
             self.fail(f"DI failed: {e}")
+
+    def test_di_binding(self):
+        res1 = di(Foo)
+
+        self.assertNotIsInstance(res1.bar, ChildBar)
+        self.assertNotIsInstance(res1.baz, ChildBaz)
+
+        di.to(Foo).bind(bar=di(ChildBar), baz=di(ChildBaz))
+
+        res2 = di(Foo)
+
+        self.assertIsInstance(res2.bar, ChildBar)
+        self.assertIsInstance(res2.baz, ChildBaz)
