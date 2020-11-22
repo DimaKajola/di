@@ -1,7 +1,7 @@
-import inspect
-import importlib
 from typing import Union, Any
 from types import ModuleType
+import inspect
+import importlib
 
 
 class DependenciesInjector:
@@ -39,9 +39,9 @@ class DependenciesInjector:
 
         return class_obj() \
             if signature is None \
-            else class_obj(**self._get_initial_arguments(class_obj, signature, kwargs))
+            else class_obj(**self._get_init_args(class_obj, signature, kwargs))
 
-    def _get_initial_arguments(self, class_obj: type, signature: inspect.Signature, user_values: dict):
+    def _get_init_args(self, class_obj: type, signature: inspect.Signature, user_values: dict):
         """
 
         :param class_obj:
