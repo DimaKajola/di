@@ -1,6 +1,5 @@
 from unittest import TestCase
-from di import DependenciesInjector
-from di.di_registry import DIRegistry
+from di import di
 from tests.snippets.foo import Foo
 import inspect
 
@@ -8,7 +7,6 @@ import inspect
 class TestDependenciesInjectorGetInitArgs(TestCase):
 
     def test_get_init_args(self):
-        di = DependenciesInjector(DIRegistry())
         signature = inspect.signature(Foo)
 
         res = di._get_init_args(Foo, signature, {})

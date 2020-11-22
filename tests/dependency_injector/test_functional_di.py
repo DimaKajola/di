@@ -1,5 +1,5 @@
 from unittest import TestCase
-from di import di
+from di import di, DependenciesInjector
 from tests.snippets.foo import Foo
 from tests.snippets.bar import Bar
 from tests.snippets.baz import Baz
@@ -32,6 +32,9 @@ class ChildBaz2(Baz):
 
 
 class TestDI(TestCase):
+
+    def test_bootstrap(self):
+        self.assertIsInstance(di, DependenciesInjector)
 
     def test_di(self):
         foo = di('tests.snippets.foo.Foo', test_int=5)
