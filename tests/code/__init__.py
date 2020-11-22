@@ -1,1 +1,0 @@
-from tests.code.bar import Bar

@@ -1,5 +1,5 @@
-from tests.code.baz import Baz
-from tests.code.bar import Bar
+from tests.snippets.baz import Baz
+from tests.snippets.bar import Bar
 
 
 class Foo:

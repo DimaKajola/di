@@ -1,29 +1,34 @@
 import inspect
+import importlib
 from typing import Union, Any
+from types import ModuleType
 
 
 class DependenciesInjector:
     """
 
     """
-    def __call__(self, class_obj: Union[str, type], **kwargs):
+    def __call__(self, class_obj: Union[str, type], module_ref: str = None, **kwargs):
         """
 
         :param class_obj:
+        :param package:
         :param kwargs:
         :return:
         """
-        return self.load(class_obj, **kwargs)
 
-    def load(self, class_obj: Union[str, type], **kwargs):
+        return self.load(class_obj, module_ref, **kwargs)
+
+    def load(self, class_obj: Union[str, type], module_ref: str = None, **kwargs):
         """
 
         :param class_obj:
+        :param module_ref:
         :param kwargs:
         :return:
         """
         if type(class_obj) == str:
-            class_obj = self.get_class(class_obj)
+            class_obj = self._get_class(class_obj, module_ref)
 
         # Please don't try to create any object based on built-in types
         # via DependenciesInjector - it might cause unpredictable behaviour.
@@ -34,9 +39,9 @@ class DependenciesInjector:
 
         return class_obj() \
             if signature is None \
-            else class_obj(**self.get_initial_arguments(class_obj, signature, kwargs))
+            else class_obj(**self._get_initial_arguments(class_obj, signature, kwargs))
 
-    def get_initial_arguments(self, class_obj: type, signature: inspect.Signature, user_values: dict):
+    def _get_initial_arguments(self, class_obj: type, signature: inspect.Signature, user_values: dict):
         """
 
         :param class_obj:
@@ -44,11 +49,11 @@ class DependenciesInjector:
         :param user_values:
         :return:
         """
-        return {key: self.get_value(parameter,  user_values.get(key, parameter.empty), class_obj)
+        return {key: self._get_value(parameter, user_values.get(key, parameter.empty), class_obj)
                 for key, parameter
                 in signature.parameters.items()}
 
-    def get_value(self, parameter, passed_value: Any, class_obj: type):
+    def _get_value(self, parameter: inspect.Parameter, passed_value: Any, class_obj: type):
         """
 
         :param parameter:
@@ -73,14 +78,27 @@ class DependenciesInjector:
             return self.load(parameter.annotation)
 
     @staticmethod
-    def get_class(class_obj: str) -> type:
+    def _get_class(class_ref: str, module_ref: str = None) -> ModuleType:
         """
 
-        :param class_obj:
+        :param class_ref:
+        :param module_ref:
         :return:
         """
-        components = class_obj.split('.')
-        class_obj = __import__(components[0])
-        for comp in components[1:]:
-            class_obj = getattr(class_obj, comp)
-        return class_obj
+
+        try:
+            return importlib.import_module(class_ref, package=module_ref)
+        except ModuleNotFoundError:
+            pass
+
+        ref = class_ref if module_ref is None else f"{module_ref}.{class_ref.strip('.')}"
+        components = ref.split('.')
+        try:
+            class_obj = __import__(components[0])
+            for comp in components[1:]:
+                class_obj = getattr(class_obj, comp)
+            return class_obj
+        except ValueError:
+            if components[0] == '':
+                raise ModuleNotFoundError(f"No module named '{class_ref}'")
+            raise
