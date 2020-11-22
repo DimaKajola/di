@@ -1,5 +1,5 @@
 from unittest import TestCase
-from di.dependency_injector import DependenciesInjector
+from di import DependenciesInjector
 
 
 class SomeClass:
