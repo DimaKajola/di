@@ -1,1 +1,1 @@
-from tests.snippets.bar import Bar
+from tests.snippets.bar import Bar  # noqa: F401

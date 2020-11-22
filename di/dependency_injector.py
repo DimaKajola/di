@@ -93,12 +93,7 @@ class DependenciesInjector:
 
         ref = class_ref if module_ref is None else f"{module_ref}.{class_ref.strip('.')}"
         components = ref.split('.')
-        try:
-            class_obj = __import__(components[0])
-            for comp in components[1:]:
-                class_obj = getattr(class_obj, comp)
-            return class_obj
-        except ValueError:
-            if components[0] == '':
-                raise ModuleNotFoundError(f"No module named '{class_ref}'")
-            raise
+        class_obj = __import__(components[0])
+        for comp in components[1:]:
+            class_obj = getattr(class_obj, comp)
+        return class_obj
