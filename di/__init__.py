@@ -77,15 +77,17 @@ class DependenciesInjector:
 
         if passed_value is not parameter.empty:
             # to be able to overwrite the parameter on-the-fly
-            return passed_value
+            return self.load(passed_value) \
+                if inspect.isclass(passed_value) \
+                else passed_value
         elif parameter.default is not parameter.empty:
             # to be able to pass default value
             return parameter.default
-        else:
-            # to auto generate arguments from annotations for user defined classes.
-            # it will also generate objects for built-in types with default values
-            # (e.g 0 for int, an empty string for str, etc.)
-            return self.load(parameter.annotation)
+
+        # to auto generate arguments from annotations for user defined classes.
+        # it will also generate objects for built-in types with default values
+        # (e.g 0 for int, an empty string for str, etc.)
+        return self.load(parameter.annotation)
 
     @staticmethod
     def _get_class(class_ref: str, module_ref: str = None) -> Any:

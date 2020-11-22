@@ -23,6 +23,14 @@ class ChildBaz(Baz):
     pass
 
 
+class ChildBar2(Bar):
+    pass
+
+
+class ChildBaz2(Baz):
+    pass
+
+
 class TestDI(TestCase):
 
     def test_di(self):
@@ -68,3 +76,10 @@ class TestDI(TestCase):
 
         self.assertIsInstance(res2.bar, ChildBar)
         self.assertIsInstance(res2.baz, ChildBaz)
+
+        di.to(Foo).bind(bar=ChildBar2, baz=ChildBaz2)
+
+        res2 = di(Foo)
+
+        self.assertIsInstance(res2.bar, ChildBar2)
+        self.assertIsInstance(res2.baz, ChildBaz2)
