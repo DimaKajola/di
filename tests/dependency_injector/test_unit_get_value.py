@@ -1,6 +1,6 @@
 from unittest import TestCase
 from tests.snippets.bar import Bar
-from di import di
+from di import DependenciesInjector, DIRegistry
 import inspect
 
 
@@ -17,25 +17,26 @@ class SomeClass:
 class TestDependenciesInjectorGetValue(TestCase):
 
     def setUp(self) -> None:
+        self.di = DependenciesInjector(DIRegistry())
         self.class_signature = inspect.signature(SomeClass)
 
     def test_get_passed_value(self):
         passed_value = 'some string'
-        res = di._get_value(self.class_signature.parameters['number'], passed_value, SomeClass)
+        res = self.di._get_value(self.class_signature.parameters['number'], passed_value, SomeClass)
 
         self.assertIs(res, passed_value)
 
     def test_get_default_value(self):
         parameter = self.class_signature.parameters['default']
-        res = di._get_value(parameter, parameter.empty, SomeClass)
+        res = self.di._get_value(parameter, parameter.empty, SomeClass)
 
         self.assertIs(res, SomeClass(item=None, number=3, bar=Bar()).default)
 
     def test_recursive_load(self):
         parameter = self.class_signature.parameters['bar']
-        res = di._get_value(parameter, parameter.empty, SomeClass)
+        res = self.di._get_value(parameter, parameter.empty, SomeClass)
         self.assertIsInstance(res, Bar)
 
     def test_no_annotation(self):
         with self.assertRaises(TypeError):
-            di._get_value(self.class_signature.parameters['item'], None, SomeClass)
+            self.di._get_value(self.class_signature.parameters['item'], None, SomeClass)

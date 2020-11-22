@@ -1,5 +1,7 @@
-# Example Package
+# Dependency Injector
 
-This is a simple example package. You can use
-[Github-flavored Markdown](https://guides.github.com/features/mastering-markdown/)
-to write your content.
+
+# TODO:
+- finish unittests (see todos in 'tests' folder)
+- fill README.txt
+- fill doc strings of classes and methods
