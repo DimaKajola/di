@@ -8,7 +8,7 @@ class Foo:
                  bar: Bar,
                  baz: Baz,
                  test_int: int = 3,
-                 test_str: str = 'this is my super test string'):
+                 test_str: str = 'default string'):
         self.bar = bar
         self.baz = baz
         self.test_int = test_int
