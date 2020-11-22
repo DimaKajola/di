@@ -10,19 +10,19 @@ class TestDependenciesInjectorGetClass(TestCase):
 
     def test_import_from_the_same_file(self):
         # Trying to import some class located in the current file
-        self.assertIs(DependenciesInjector._get_class('tests.dependency_injector.test_unit_get_class.SomeClass'),
-                      SomeClass)
+        ref = 'tests.dependency_injector.test_unit_get_class.SomeClass'
+        self.assertIs(DependenciesInjector._get_class(ref), SomeClass)
 
     def test_from_other_file(self):
-        # Trying to import some classes located in another file and that weren't imported before
+        # Trying to import some classes located in another files and that weren't imported before
 
-        # Bar's reference added to tests.snippets.__init__.py
+        # A reference to Bar added to tests.snippets.__init__.py
         class_obj = DependenciesInjector._get_class('tests.snippets.bar.Bar')
 
         from tests.snippets.bar import Bar
         self.assertIs(class_obj, Bar)
 
-        # Foo's reference wasn't added to tests.snippets.__init__.py
+        # A reference to Foo wasn't added to tests.snippets.__init__.py
         class_obj = DependenciesInjector._get_class('tests.snippets.foo.Foo')
 
         from tests.snippets.foo import Foo
